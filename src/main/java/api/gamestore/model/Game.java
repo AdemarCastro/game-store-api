@@ -4,11 +4,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 @Document(collection = "games")
 public class Game {
 
     @Id
-    private String id; // Adicionando um campo de identificação para ser usado como _id no MongoDB
+    private Number id; // Adicionando um campo de identificação para ser usado como _id no MongoDB
 
     @Indexed(unique = true)
     private String name;
@@ -25,12 +27,15 @@ public class Game {
 
     private String available;
 
+    private Date dataCadastro;
+
     public Game() {
 
     }
 
     // Valores não obrigatórios como NULL
-    public Game(String name, String genero, Number year, Number price, String available) {
+    public Game(Number id, String name, String genero, Number year, Number price, String available, Date dataCadastro) {
+        this.id = id;
         this.name = name;
         this.genero = genero;
         this.description = null; // Valor não obrigatório
@@ -38,9 +43,11 @@ public class Game {
         this.price = price;
         this.urlImage = null; // Valor não obrigatório
         this.available = available;
+        this.dataCadastro = dataCadastro != null ? dataCadastro : new Date();
     }
 
-    public Game(String name, String genero, String description, Number year, Number price, String urlImage, String available) {
+    public Game(Number id, String name, String genero, String description, Number year, Number price, String urlImage, String available, Date dataCadastro) {
+        this.id = id;
         this.name = name;
         this.genero = genero;
         this.description = description;
@@ -48,11 +55,14 @@ public class Game {
         this.price = price;
         this.urlImage = urlImage;
         this.available = available;
+        this.dataCadastro = dataCadastro != null ? dataCadastro : new Date();
     }
 
-    public String getId() {
+    public Number getId() {
         return id;
     }
+
+    public void setId(Number id) { this.id = id; }
 
     public String getName() {
         return name;
@@ -110,11 +120,19 @@ public class Game {
         this.available = available;
     }
 
+    public Date getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(Date dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
     // Método que imprime informações do Game
     @Override
     public String toString() {
         return String.format(
-                "Game[id=%s, name=%s, description=%s, year=%s, price=%s, urlImage=%s, available=%s]",
-                id, name, description, year, price, urlImage, available);
+                "Game[id=%s, name=%s, description=%s, year=%s, price=%s, urlImage=%s, available=%s, dataCadastro=%s]",
+                id, name, description, year, price, urlImage, available, dataCadastro);
     }
 }
