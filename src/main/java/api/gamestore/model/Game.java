@@ -20,14 +20,17 @@ public class Game {
     private String description;
 
     private Number year;
+    // Preciso consumir um Validador que confirme o formato de String "XXXX" e recuse valores abaixo de 1958 e acima de um ano 1 ano + ano atual
 
     private Number price;
+    // Transformar o formato para "0.000,00" padrão Brasileiro
 
     private String urlImage;
 
     private String available;
 
     private Date dataCadastro;
+    // Preciso de um Tratamento que transforme a Data Criada para um formato padrão de "dd, MM, yyyy, EEEE, H:i:s"
 
     public Game() {
 
