@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.apache.log4j.Logger;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -52,6 +53,58 @@ public class GameController {
 
             // 4. Retorna uma resposta HTTP 500 (Internal Server Error) com a exceção no corpo da resposta
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping
+    @ResponseBody
+    public ResponseEntity<Game> create(@RequestBody JSONObject game) {
+
+        try {
+
+            if (gameService.isJSONValid(game.toString())) {
+
+                Game gameCreated = gameService.create(game);
+                var uri = ServletUriComponentsBuilder.fromCurrentRequest().path(gameCreated.getId().toString()).build().toUri();
+
+                gameService.add(gameCreated);
+                return ResponseEntity.created(uri).body(null);
+            } else {
+
+                return ResponseEntity.badRequest().body(null);
+            }
+        } catch (Exception e) {
+
+            logger.error("Os campos JSON não são analisáveis. " + e);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
+        }
+    }
+
+    @PutMapping(path = "/{id}", produces = { "application/json" })
+    public ResponseEntity<Game> update(@PathVariable("id") long id, @RequestBody JSONObject game) {
+
+        try {
+
+            if (gameService.isJSONValid((game.toString()))) {
+
+                Game gameToUpdate = gameService.findById(id);
+                if (gameToUpdate == null) {
+
+                    logger.error("Game não encontrado.");
+                    return ResponseEntity.notFound().build();
+                } else {
+
+                    Game gameUpdate = gameService.update(gameToUpdate, game);
+                    return ResponseEntity.ok(gameUpdate);
+                }
+            } else {
+
+                return ResponseEntity.badRequest().body(null);
+            }
+        } catch (Exception e) {
+
+            logger.error("Os campos JSON não são analisáveis. " + e);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }
     }
 }

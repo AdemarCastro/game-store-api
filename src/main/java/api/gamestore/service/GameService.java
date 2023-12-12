@@ -57,6 +57,14 @@ public class GameService {
         game.setAvailable(available != null ? available : game.getAvailable());
     }
 
+    public Game create(JSONObject jsonGame) throws JSONException {
+
+        Game game = new Game();
+        setGameValues(jsonGame, game);
+
+        return game;
+    }
+
     // Método para criar um Game com base em um objeto JSON
     public Game game(JSONObject jsonGame) throws JSONException {
 
