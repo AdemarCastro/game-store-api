@@ -1,5 +1,6 @@
 package api.gamestore.service;
 
+import api.gamestore.model.Game;
 import api.gamestore.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
@@ -56,6 +57,14 @@ public class UserService {
         user.setDataCadastro(dataCadastro != null ? dataCadastro : user.getDataCadastro());
     }
 
+    public User create(JSONObject jsonUser) throws JSONException {
+
+        User user = new User();
+        setUserValues(jsonUser, user);
+
+        return user;
+    }
+
     // Método para criar um User com base em um objeto JSON
     public User user(JSONObject jsonUser) throws JSONException {
 
@@ -90,6 +99,12 @@ public class UserService {
     public User findByCpf(String cpf) {
 
         return users.stream().filter(u -> cpf == u.getCpf()).collect(Collectors.toList()).get(0);
+    }
+
+    // Método para limpar a lista de Games
+    public void delete() {
+
+        users.clear();
     }
 
     // Método para limpar as instâncias de objetos
