@@ -4,13 +4,14 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Document(collection = "games")
 public class Game {
 
     @Id
-    private Number id; // Adicionando um campo de identificação para ser usado como _id no MongoDB
+    private Integer id; // Adicionando um campo de identificação para ser usado como _id no MongoDB
 
     @Indexed(unique = true)
     private String name;
@@ -19,10 +20,10 @@ public class Game {
 
     private String description;
 
-    private Number year;
+    private BigDecimal year;
     // Preciso consumir um Validador que confirme o formato de String "XXXX" e recuse valores abaixo de 1958 e acima de um ano 1 ano + ano atual
 
-    private Number price;
+    private BigDecimal price;
     // Transformar o formato para "0.000,00" padrão Brasileiro
 
     private String urlImage;
@@ -37,7 +38,7 @@ public class Game {
     }
 
     // Valores não obrigatórios como NULL
-    public Game(Number id, String name, String genero, Number year, Number price, String available, Date dataCadastro) {
+    public Game(Integer id, String name, String genero, BigDecimal year, BigDecimal price, String available) {
         this.id = id;
         this.name = name;
         this.genero = genero;
@@ -46,10 +47,10 @@ public class Game {
         this.price = price;
         this.urlImage = null; // Valor não obrigatório
         this.available = available;
-        this.dataCadastro = dataCadastro != null ? dataCadastro : new Date();
+        this.dataCadastro = new Date();
     }
 
-    public Game(Number id, String name, String genero, String description, Number year, Number price, String urlImage, String available, Date dataCadastro) {
+    public Game(Integer id, String name, String genero, String description, BigDecimal year, BigDecimal price, String urlImage, String available) {
         this.id = id;
         this.name = name;
         this.genero = genero;
@@ -58,14 +59,14 @@ public class Game {
         this.price = price;
         this.urlImage = urlImage;
         this.available = available;
-        this.dataCadastro = dataCadastro != null ? dataCadastro : new Date();
+        this.dataCadastro = new Date();
     }
 
-    public Number getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Number id) { this.id = id; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getName() {
         return name;
@@ -91,19 +92,19 @@ public class Game {
         this.description = description;
     }
 
-    public Number getYear() {
+    public BigDecimal getYear() {
         return year;
     }
 
-    public void setYear(Number year) {
+    public void setYear(BigDecimal year) {
         this.year = year;
     }
 
-    public Number getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Number price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

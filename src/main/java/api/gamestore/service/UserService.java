@@ -22,7 +22,10 @@ public class UserService {
     // // Cria uma instância de 'ArrayList' para armazenar os usuários ('users') se essa lista ainda não foi inicializada
     public void createUserLits() {
 
-        users = (users == null) ? new ArrayList<>() : null;
+        if (users == null) {
+
+            users = new ArrayList<>();
+        }
     }
 
     // Verifica se uma string JSON é válida utilizando a biblioteca Jackson ('ObjectMapper')

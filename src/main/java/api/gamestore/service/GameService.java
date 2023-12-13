@@ -7,7 +7,9 @@ import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +22,10 @@ public class GameService {
     // Cria uma instância de 'ArrayList' para armazenar os jogos ('games') se essa lista ainda não foi inicializada
     public void createGameList() {
 
-        games = (games == null) ? new ArrayList<>() : null;
+        if (games == null) {
+
+            games = new ArrayList<>();
+        }
     }
 
     // Verifica se uma string JSON é válida utilizando a biblioteca Jackson ('ObjectMapper')
@@ -35,26 +40,42 @@ public class GameService {
         }
     }
 
+    // Converte o campo "id" de um objeto JSON para um inteiro
+    private int parseId(JSONObject game) {
+
+        return Integer.valueOf((int) game.get("id"));
+    }
+
+    // Converte o campo "year" de um objeto JSON para um BigDecimal
+    private BigDecimal parseYear(JSONObject game) {
+
+        return new BigDecimal((String) game.get("year"));
+    }
+
+    // Converte o campo "price" de um objeto JSON para um BigDecimal
+    private BigDecimal parsePrice(JSONObject game) {
+
+        return new BigDecimal((String) game.get("price"));
+    }
+
     // Este método configura os valores do objeto Game com base nos valores do objeto JSON
     private void setGameValues(JSONObject jsonGame, Game game) {
 
-        Number id = (Number) jsonGame.get("id");
         String name = (String) jsonGame.get("name");
         String genero = (String) jsonGame.get("genero");
         String description = (String) jsonGame.get("description");
-        Number year = (Number) jsonGame.get("year");
-        Number price = (Number) jsonGame.get("price");
         String urlImage = (String) jsonGame.get("urlImage");
         String available = (String) jsonGame.get("available");
 
-        game.setId(id != null ? id : game.getId());
+        game.setId(jsonGame.get("id") != null ? parseId(jsonGame) : game.getId());
         game.setName(name != null ? name : game.getName());
         game.setGenero(genero != null ? genero : game.getGenero());
         game.setDescription(description != null ? description : game.getDescription());
-        game.setYear(year != null ? year : game.getYear());
-        game.setPrice(price != null ? price : game.getPrice());
+        game.setYear(jsonGame.get("year") != null ? parseYear(jsonGame) : game.getYear());
+        game.setPrice(jsonGame.get("price") != null ? parsePrice(jsonGame) : game.getPrice());
         game.setUrlImage(urlImage != null ? urlImage : game.getUrlImage());
         game.setAvailable(available != null ? available : game.getAvailable());
+        game.setDataCadastro(new Date());
     }
 
     public Game create(JSONObject jsonGame) throws JSONException {
@@ -96,9 +117,10 @@ public class GameService {
     }
 
     // Método para encontrar um Game pelo ID na lista
-    public Game findById(Number id) {
+    public Game findById(Integer id) {
 
-        return games.stream().filter(g -> id == g.getId()).collect(Collectors.toList()).get(0);
+        List<Game> gameList = games.stream().filter(g -> id == g.getId()).collect(Collectors.toList());
+        return gameList.isEmpty() ? null : gameList.get(0);
     }
 
     // Método para limpar a lista de Games

@@ -5,6 +5,7 @@ import api.gamestore.service.GameService;
 import org.apache.coyote.Response;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -81,16 +83,18 @@ public class GameController {
     }
 
     @PutMapping(path = "/{id}", produces = { "application/json" })
-    public ResponseEntity<Game> update(@PathVariable("id") long id, @RequestBody JSONObject game) {
+    public ResponseEntity<Game> update(@PathVariable("id") Integer id, @RequestBody JSONObject game) {
 
         try {
 
-            if (gameService.isJSONValid((game.toString()))) {
+            if (gameService.isJSONValid(game.toString())) {
 
                 Game gameToUpdate = gameService.findById(id);
+
                 if (gameToUpdate == null) {
 
                     logger.error("Game não encontrado.");
+                    System.out.println("Game não encontrado.");
                     return ResponseEntity.notFound().build();
                 } else {
 
@@ -104,6 +108,7 @@ public class GameController {
         } catch (Exception e) {
 
             logger.error("Os campos JSON não são analisáveis. " + e);
+            System.out.println("Os campos JSON não são analisáveis. " + e);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }
     }
