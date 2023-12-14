@@ -2,8 +2,9 @@ package util;
 
 import java.util.regex.Pattern;
 
-public class NameValidator {
+public class NameValidator implements Validator{
 
+    @Override
     public void validator(Object value) {
 
         // Garante que o name seja uma String

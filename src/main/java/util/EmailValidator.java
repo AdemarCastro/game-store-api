@@ -1,7 +1,8 @@
 package util;
 
-public class EmailValidator {
+public class EmailValidator implements Validator{
 
+    @Override
     public void validator(Object value) {
 
         // Garante que o value seja uma String

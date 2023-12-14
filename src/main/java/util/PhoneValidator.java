@@ -1,7 +1,8 @@
 package util;
 
-public class PhoneValidator {
+public class PhoneValidator implements Validator{
 
+    @Override
     public void validator(Object value) {
 
         // Garante que o formato do value seja String

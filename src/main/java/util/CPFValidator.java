@@ -2,8 +2,9 @@ package util;
 
 import java.util.logging.Logger;
 
-public class CPFValidator {
+public class CPFValidator implements Validator{
 
+    @Override
     public void validator(Object value) {
 
         // Logger
