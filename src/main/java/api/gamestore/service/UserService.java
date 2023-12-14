@@ -49,7 +49,6 @@ public class UserService {
         String password = (String) jsonUser.get("password");
         String urlImage = (String) jsonUser.get("urlImage");
         String phone = (String) jsonUser.get("phone");
-        Date dataCadastro = (Date) jsonUser.get("dataCadastro");
 
         user.setCpf(cpf != null ? cpf : user.getCpf());
         user.setName(name != null ? name : user.getName());
@@ -57,7 +56,7 @@ public class UserService {
         user.setPassword(password != null ? password : user.getPassword());
         user.setUrlImage(urlImage != null ? urlImage : user.getUrlImage());
         user.setPhone(phone != null ? phone : user.getPhone());
-        user.setDataCadastro(dataCadastro != null ? dataCadastro : user.getDataCadastro());
+        user.setDataCadastro(new Date());
     }
 
     public User create(JSONObject jsonUser) throws JSONException {
