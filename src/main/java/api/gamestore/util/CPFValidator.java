@@ -1,4 +1,4 @@
-package util;
+package api.gamestore.util;
 
 import java.util.logging.Logger;
 

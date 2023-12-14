@@ -1,4 +1,4 @@
-package util;
+package api.gamestore.util;
 
 public class PhoneValidator implements Validator{
 
