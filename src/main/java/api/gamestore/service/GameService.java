@@ -1,6 +1,10 @@
 package api.gamestore.service;
 
 import api.gamestore.model.Game;
+import api.gamestore.util.PriceValidator;
+import api.gamestore.util.TextValidator;
+import api.gamestore.util.URLValidator;
+import api.gamestore.util.YearValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -8,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,23 +54,68 @@ public class GameService {
     // Converte o campo "year" de um objeto JSON para um BigDecimal
     private BigDecimal parseYear(JSONObject game) {
 
-        return new BigDecimal((String) game.get("year"));
+        BigDecimal year = new BigDecimal((String) game.get("year"));
+        validateYear(year);
+        return year;
     }
 
     // Converte o campo "price" de um objeto JSON para um BigDecimal
     private BigDecimal parsePrice(JSONObject game) {
 
-        return new BigDecimal((String) game.get("price"));
+        BigDecimal price = new BigDecimal((String) game.get("price"));
+        validatePrice(price);
+        return price;
     }
+
+    // Valida os campos "name", "genero" e "description" do objeto JSON
+    private void validateText(String text) {
+
+        TextValidator textValidator = new TextValidator();
+        textValidator.validator(text);
+    }
+
+    // Valida o campo "year" do objeto JSON
+    private void validateYear(BigDecimal year) {
+
+        YearValidator yearValidator = new YearValidator();
+        yearValidator.validator(year);
+    }
+
+    // Valida o campo "price" do objeto JSON
+    private void validatePrice(BigDecimal price) {
+
+        PriceValidator priceValidator = new PriceValidator();
+        priceValidator.validator(price);
+    }
+
+    // Valida o campo "url" do objeto JSON
+    private void validateUrl(String url) {
+
+        // Não trabalho com o valor Boolean, mas sim com uma respota de erro caso a url não passe no validador!
+        URLValidator urlValidator = new URLValidator();
+        urlValidator.validator(url);
+    }
+
+    // Valida o campo "available" do objeto JSON -> Pendente
+
 
     // Este método configura os valores do objeto Game com base nos valores do objeto JSON
     private void setGameValues(JSONObject jsonGame, Game game) {
 
         String name = (String) jsonGame.get("name");
+        validateText(name);
+
         String genero = (String) jsonGame.get("genero");
+        validateText(genero);
+
         String description = (String) jsonGame.get("description");
+        validateText(description);
+
         String urlImage = (String) jsonGame.get("urlImage");
+        validateUrl(urlImage);
+
         String available = (String) jsonGame.get("available");
+        // Validação pendente
 
         game.setId(jsonGame.get("id") != null ? parseId(jsonGame) : game.getId());
         game.setName(name != null ? name : game.getName());
@@ -75,7 +125,7 @@ public class GameService {
         game.setPrice(jsonGame.get("price") != null ? parsePrice(jsonGame) : game.getPrice());
         game.setUrlImage(urlImage != null ? urlImage : game.getUrlImage());
         game.setAvailable(available != null ? available : game.getAvailable());
-        game.setDataCadastro(new Date());
+        game.setDataCadastro(new Date()); // Necessário fazer um tratamento dessa data para o formato (dd, MMMM, yyyy, EEEE)
     }
 
     public Game create(JSONObject jsonGame) throws JSONException {

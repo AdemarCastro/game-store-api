@@ -2,42 +2,36 @@ package api.gamestore.controller;
 
 import api.gamestore.model.Game;
 import api.gamestore.service.GameService;
-import org.apache.coyote.Response;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import org.apache.log4j.Logger;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api-gamestore/games")
 public class GameController {
 
-    private static final Logger logger = Logger.getLogger(GameController.class);
-
     @Autowired
     private GameService gameService;
 
     @GetMapping
     public ResponseEntity<List<Game>> find() {
-        // 1. Chama o método 'find()' do serviço 'gameService' para obter uma lista de games
-        if (gameService.find().isEmpty()) {
-            // 2. Se a lista estiver vazia, retorna uma resposta 404 (Not Found)
-            return ResponseEntity.notFound().build();
+        try {
+            // Chama o método 'find()' do serviço 'gameService' para obter uma lista de games
+            if (gameService.find().isEmpty()) {
+                // 2. Se a lista estiver vazia, retorna uma resposta 404 (Not Found)
+                return ResponseEntity.notFound().build();
+            }
+
+            // Retorna uma resposta 200 (OK) contendo a lista de games no corpo da resposta
+            return ResponseEntity.ok(gameService.find());
+        } catch (Exception e) {
+
         }
-
-        // 3. Registra as informações da lista de games no log
-        logger.info(gameService.find());
-
-        // 4. Retorna uma resposta 200 (OK) contendo a lista de games no corpo da resposta
-        return ResponseEntity.ok(gameService.find());
     }
 
     @DeleteMapping
