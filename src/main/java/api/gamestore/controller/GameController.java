@@ -1,5 +1,8 @@
 package api.gamestore.controller;
 
+import lombok.extern.slf4j.Slf4j;
+import api.gamestore.exception.GameDeleteException;
+import api.gamestore.exception.GameNotFoundException;
 import api.gamestore.model.Game;
 import api.gamestore.service.GameService;
 import org.json.simple.JSONObject;
@@ -11,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api-gamestore/games")
 public class GameController {
@@ -21,33 +25,49 @@ public class GameController {
     @GetMapping
     public ResponseEntity<List<Game>> find() {
         try {
-            // Chama o método 'find()' do serviço 'gameService' para obter uma lista de games
-            if (gameService.find().isEmpty()) {
-                // 2. Se a lista estiver vazia, retorna uma resposta 404 (Not Found)
-                return ResponseEntity.notFound().build();
+            // Fazendo a varredura de todos os jogos
+            List<Game> games = gameService.find();
+
+            // Verificando se há jogos na lista
+            if (games.isEmpty()) {
+
+                // Lançamento de exceção para caso não encontre nenhum jogo cadastrado
+                throw new GameNotFoundException("Nenhum jogo encontrado.");
             }
 
-            // Retorna uma resposta 200 (OK) contendo a lista de games no corpo da resposta
-            return ResponseEntity.ok(gameService.find());
+            // Retorna a lista com os jogos
+            return ResponseEntity.ok(games);
+        } catch (GameNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
     @DeleteMapping
     public ResponseEntity<Boolean> delete() {
-
         try {
-            // 1. Chama o método 'delete()' do serviço 'travelService' para excluir games
+
+            // Deletando todos os jogos cadastrados
             gameService.delete();
 
-            // 2. Retorna uma resposta HTTP 204 (No Content) indicando sucesso sem conteúdo no corpo da resposta
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            // 3. Se ocorrer uma exceção durante a exclusão, registra o erro no log
-            logger.error(e);
+            // Verificar se ainda há jogos cadastrados
+            List<Game> games = gameService.find();
 
-            // 4. Retorna uma resposta HTTP 500 (Internal Server Error) com a exceção no corpo da resposta
+            if (!games.isEmpty()) {
+                // Lançamento de exceção para caso não encontre nenhum jogo cadastrado
+                throw new GameDeleteException("Ainda há jogos cadastrados.");
+            }
+
+            // Retorna uma resposta HTTP 204 (No Content) indicando sucesso sem um conteúdo no corpo da resposta
+            return ResponseEntity.noContent().build();
+        } catch (GameDeleteException e) {
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (Exception e) {
+
+            log.error("ERRO: Exclusão de games falhou!", e);
+            // Retorna uma resposta HTTP 500 (Internal Server Error) com a exceção no corpo da resposta
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -58,7 +78,20 @@ public class GameController {
 
         try {
 
+            // Verifica se o JSON é válido
             if (gameService.isJSONValid(game.toString())) {
+
+//                // Verifica se há um cadastro com este ID
+//                Integer gameId = (Integer) game.get("id");
+//                System.out.println(gameId);
+//
+//                // Verifica se o ID já está em uso
+//                if (gameService.isIdAlreadyInUse(gameId)) {
+//
+//                    System.out.println("O ID já está em uso.");
+//                    log.error("O ID já está em uso.");
+//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//                }
 
                 Game gameCreated = gameService.create(game);
                 var uri = ServletUriComponentsBuilder.fromCurrentRequest().path(gameCreated.getId().toString()).build().toUri();
@@ -71,7 +104,7 @@ public class GameController {
             }
         } catch (Exception e) {
 
-            logger.error("Os campos JSON não são analisáveis. " + e);
+            log.error("Os campos JSON não são analisáveis. " + e);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }
     }
@@ -87,7 +120,7 @@ public class GameController {
 
                 if (gameToUpdate == null) {
 
-                    logger.error("Game não encontrado.");
+                    log.error("Game não encontrado.");
                     System.out.println("Game não encontrado.");
                     return ResponseEntity.notFound().build();
                 } else {
@@ -101,7 +134,7 @@ public class GameController {
             }
         } catch (Exception e) {
 
-            logger.error("Os campos JSON não são analisáveis. " + e);
+            log.error("Os campos JSON não são analisáveis. " + e);
             System.out.println("Os campos JSON não são analisáveis. " + e);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }

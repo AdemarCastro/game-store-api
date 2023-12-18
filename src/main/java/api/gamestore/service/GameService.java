@@ -1,10 +1,7 @@
 package api.gamestore.service;
 
 import api.gamestore.model.Game;
-import api.gamestore.util.PriceValidator;
-import api.gamestore.util.TextValidator;
-import api.gamestore.util.URLValidator;
-import api.gamestore.util.YearValidator;
+import api.gamestore.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -12,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,11 +63,25 @@ public class GameService {
         return price;
     }
 
-    // Valida os campos "name", "genero" e "description" do objeto JSON
-    private void validateText(String text) {
+    // Valida o campo "name" do objeto JSON
+    private void validateName(String name) {
 
-        TextValidator textValidator = new TextValidator();
-        textValidator.validator(text);
+        NameValidator nameValidator = new NameValidator();
+        nameValidator.validator(name);
+    }
+
+    // Valida o campo "genero" do objeto JSON
+    private void validateGenero(String genero) {
+
+        GeneroValidator generoValidator = new GeneroValidator();
+        generoValidator.validator(genero);
+    }
+
+    // Valida o campo "description" do objeto JSON
+    private void validateDescription(String description) {
+
+        DescriptionValidator descriptionValidator = new DescriptionValidator();
+        descriptionValidator.validator(description);
     }
 
     // Valida o campo "year" do objeto JSON
@@ -103,13 +113,13 @@ public class GameService {
     private void setGameValues(JSONObject jsonGame, Game game) {
 
         String name = (String) jsonGame.get("name");
-        validateText(name);
+        validateName(name);
 
         String genero = (String) jsonGame.get("genero");
-        validateText(genero);
+        validateGenero(genero);
 
         String description = (String) jsonGame.get("description");
-        validateText(description);
+        validateDescription(description);
 
         String urlImage = (String) jsonGame.get("urlImage");
         validateUrl(urlImage);
@@ -171,6 +181,11 @@ public class GameService {
 
         List<Game> gameList = games.stream().filter(g -> id == g.getId()).collect(Collectors.toList());
         return gameList.isEmpty() ? null : gameList.get(0);
+    }
+
+    // Método para verificar se já um cadastro com o mesmo ID
+    public Boolean isIdAlreadyInUse(Integer id) {
+        return games.stream().anyMatch(game -> id.equals(game.getId()));
     }
 
     // Método para limpar a lista de Games
