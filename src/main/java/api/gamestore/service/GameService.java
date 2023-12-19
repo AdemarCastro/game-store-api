@@ -1,10 +1,12 @@
 package api.gamestore.service;
 
+import api.gamestore.exception.IdRegisteredException;
 import api.gamestore.model.Game;
 import api.gamestore.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -62,6 +64,15 @@ public class GameService {
         validatePrice(price);
         return price;
     }
+
+    // Verifica se o valor do campo ID já está no banco de dados
+//    private Integer checkId(Integer id) {
+//        if (isIdAlreadyInUse(id)) {
+//            return id;
+//        } else {
+//            return null;
+//        }
+//    }
 
     // Valida o campo "name" do objeto JSON
     private void validateName(String name) {
@@ -127,6 +138,7 @@ public class GameService {
         String available = (String) jsonGame.get("available");
         // Validação pendente
 
+//        game.setId(jsonGame.get("id") != null ? checkId(parseId(jsonGame)) : game.getId());
         game.setId(jsonGame.get("id") != null ? parseId(jsonGame) : game.getId());
         game.setName(name != null ? name : game.getName());
         game.setGenero(genero != null ? genero : game.getGenero());
@@ -142,6 +154,12 @@ public class GameService {
 
         Game game = new Game();
         setGameValues(jsonGame, game);
+
+        // Verificar se o ID já está em uso
+        Integer gameId = game.getId();
+        if (gameId != null && isIdAlreadyInUse(gameId)) {
+            throw new IdRegisteredException("Erro: ID já está em uso. Escolhe um ID único.");
+        }
 
         return game;
     }
@@ -184,8 +202,16 @@ public class GameService {
     }
 
     // Método para verificar se já um cadastro com o mesmo ID
-    public Boolean isIdAlreadyInUse(Integer id) {
-        return games.stream().anyMatch(game -> id.equals(game.getId()));
+    private boolean isIdAlreadyInUse(Integer id) {
+
+        // Inicializando a lista de games
+        createGameList();
+
+        if (games.isEmpty()) {
+            return false;
+        } else {
+            return games.stream().anyMatch(game -> id.equals(game.getId()));
+        }
     }
 
     // Método para limpar a lista de Games

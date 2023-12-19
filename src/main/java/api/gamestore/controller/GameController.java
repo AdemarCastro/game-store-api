@@ -81,18 +81,6 @@ public class GameController {
             // Verifica se o JSON é válido
             if (gameService.isJSONValid(game.toString())) {
 
-//                // Verifica se há um cadastro com este ID
-//                Integer gameId = (Integer) game.get("id");
-//                System.out.println(gameId);
-//
-//                // Verifica se o ID já está em uso
-//                if (gameService.isIdAlreadyInUse(gameId)) {
-//
-//                    System.out.println("O ID já está em uso.");
-//                    log.error("O ID já está em uso.");
-//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//                }
-
                 Game gameCreated = gameService.create(game);
                 var uri = ServletUriComponentsBuilder.fromCurrentRequest().path(gameCreated.getId().toString()).build().toUri();
 
