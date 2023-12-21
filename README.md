@@ -150,5 +150,5 @@ Remova todos os usuários com uma requisição de corpo vazio e receba um tranqu
 - 🧪 [TEST]: Adição ou correção de testes.
 
 ## Contato
-Email: seu.email@example.com <br>
-LinkedIn: [Seu LinkedIn](https://www.linkedin.com/in/seu-linkedin/)
+Email: ademar.castro.curriculo@gmail.com <br>
+LinkedIn: [Seu LinkedIn](https://www.linkedin.com/in/ademar-castro-8bb95b256/)
