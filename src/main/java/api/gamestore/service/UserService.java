@@ -100,7 +100,8 @@ public class UserService {
     // Método para encontrar um User pelo CPF na lista
     public User findByCpf(String cpf) {
 
-        return users.stream().filter(u -> cpf == u.getCpf()).collect(Collectors.toList()).get(0);
+        // Retorna null se nenhum usuário for encontrado com o CPF especificado
+        return users.stream().filter(u -> cpf.equals(u.getCpf())).findFirst().orElse(null);
     }
 
     // Método para limpar a lista de Games

@@ -1,10 +1,8 @@
 package api.gamestore.controller;
 
-import api.gamestore.model.Game;
 import api.gamestore.model.User;
-import api.gamestore.service.GameService;
+import lombok.extern.slf4j.Slf4j;
 import api.gamestore.service.UserService;
-import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,11 +12,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api-gamestore/users")
 public class UserController {
-
-    private static final Logger logger = Logger.getLogger(UserController.class);
 
     @Autowired
     private UserService userService;
@@ -30,7 +27,7 @@ public class UserController {
 
             return ResponseEntity.notFound().build();
         }
-        logger.info(userService.find());
+
         return ResponseEntity.ok(userService.find());
     }
 
@@ -41,7 +38,7 @@ public class UserController {
             userService.delete();
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            logger.error(e);
+            log.error("Erro: Falha ao deletar Users.", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -65,12 +62,12 @@ public class UserController {
             }
         } catch (Exception e) {
 
-            logger.error("Os campos JSON não são analisáveis. " + e);
+            log.error("Os campos JSON não são analisáveis. ", e);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }
     }
 
-    @PutMapping(path = "/{id}", produces = { "application/json" })
+    @PutMapping(path = "/{cpf}", produces = { "application/json" })
     public ResponseEntity<User> update(@PathVariable("cpf") String cpf, @RequestBody JSONObject user) {
 
         try {
@@ -80,7 +77,7 @@ public class UserController {
                 User userToUpdate = userService.findByCpf(cpf);
                 if (userToUpdate == null) {
 
-                    logger.error("User não encontrado.");
+                    log.error("User não encontrado.");
                     return ResponseEntity.notFound().build();
                 } else {
 
@@ -93,7 +90,7 @@ public class UserController {
             }
         } catch (Exception e) {
 
-            logger.error("Os campos JSON não são analisáveis. " + e);
+            log.error("Os campos JSON não são analisáveis. ", e);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
         }
     }
