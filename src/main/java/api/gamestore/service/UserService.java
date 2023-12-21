@@ -2,6 +2,7 @@ package api.gamestore.service;
 
 import api.gamestore.model.Game;
 import api.gamestore.model.User;
+import api.gamestore.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -40,15 +41,68 @@ public class UserService {
         }
     }
 
+    // Valida o campo "cpf" do objeto JSON
+    private void validateCPF(String cpf) {
+
+        CPFValidator cpfValidator = new CPFValidator();
+        cpfValidator.validator(cpf);
+    }
+
+    // Valida o campo "name" do objeto JSON
+    private void validateName(String name) {
+
+        NameValidator nameValidator = new NameValidator();
+        nameValidator.validator(name);
+    }
+
+    // Valida o campo "email" do objeto JSON
+    private void validateEmail(String email) {
+
+        EmailValidator emailValidator = new EmailValidator();
+        emailValidator.validator(email);
+    }
+
+    // Valida o campo "password" do objeto JSON
+    private void validatePassword(String password) {
+
+        PasswordValidator passwordValidator = new PasswordValidator();
+        passwordValidator.validator(password);
+    }
+
+    // Valida o campo "urlImage" do objeto JSON
+    private void validateURL(String urlImage) {
+
+        URLValidator urlImageValidator = new URLValidator();
+        urlImageValidator.validator(urlImage);
+    }
+
+    // Valida o campo "phone" do objeto JSON
+    private void validatePhone(String phone) {
+
+        PhoneValidator phoneValidator = new PhoneValidator();
+        phoneValidator.validator(phone);
+    }
+
     // Este método configura os valores do objeto User com base nos valores do objeto JSON
     public void setUserValues(JSONObject jsonUser, User user) {
 
         String cpf = (String) jsonUser.get("cpf");
+        validateCPF(cpf);
+
         String name = (String) jsonUser.get("name");
+        validateName(name);
+
         String email = (String) jsonUser.get("email");
+        validateEmail(email);
+
         String password = (String) jsonUser.get("password");
+        validatePassword(password);
+
         String urlImage = (String) jsonUser.get("urlImage");
+        validateURL(urlImage);
+
         String phone = (String) jsonUser.get("phone");
+        validatePhone(phone);
 
         user.setCpf(cpf != null ? cpf : user.getCpf());
         user.setName(name != null ? name : user.getName());

@@ -65,15 +65,6 @@ public class GameService {
         return price;
     }
 
-    // Verifica se o valor do campo ID já está no banco de dados
-//    private Integer checkId(Integer id) {
-//        if (isIdAlreadyInUse(id)) {
-//            return id;
-//        } else {
-//            return null;
-//        }
-//    }
-
     // Valida o campo "name" do objeto JSON
     private void validateName(String name) {
 
