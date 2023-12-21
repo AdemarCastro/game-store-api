@@ -1,6 +1,5 @@
 package api.gamestore.service;
 
-import api.gamestore.model.Game;
 import api.gamestore.model.User;
 import api.gamestore.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -31,15 +29,20 @@ public class UserService {
 
     // Verifica se uma string JSON é válida utilizando a biblioteca Jackson ('ObjectMapper')
     public boolean isJSONValid(String jsonInString) {
-
         // ObjectMapper = Usado para converter JSON para objetos Java e vice-versa
         // ReadTree = Usado para ler a árvore JSON da String
         try {
-            return new ObjectMapper().readTree(jsonInString) != null;
+            ObjectMapper objectMapper = new ObjectMapper();
+            if (jsonInString != null && objectMapper.readTree(jsonInString) != null) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (IOException e) {
             return false;
         }
     }
+
 
     // Valida o campo "cpf" do objeto JSON
     private void validateCPF(String cpf) {
